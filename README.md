@@ -183,6 +183,7 @@ Note: You can choose to skip this step
 
 # 18 - Add the following links to ‘Authorized JavaScript origins’ in Google Developer’s Console -
   http://ec2-34-213-204-151.us-west-2.compute.amazonaws.com
+  
   http://34.213.204.151
   
 # 19 - I specifically had to perform the following steps to make this project work
