@@ -231,9 +231,10 @@ If you want to use the venv virtual environment from the command line, you need 
  
  Note: Think about how files are referenced in the Virtual Host file, is it only a file name or the full path to the file?
  
- 6. Donloaded fresh client_secrets.json file from Google Developers Console and moved it to catalog project folder on the instance
+ 6. Downloaded fresh client_secrets.json file from Google Developers Console and moved it to catalog project folder on the instance
  
  7. At regular intervals, to resolve errors, checked error.log file - sudo tail /var/log/apache2/error.log
+Also, checked what sites are now enabled using: ls -alh /etc/apache2/sites-enabled/
  
 # 20 - Restart Apache to launch the app
   Restarted the instance from lightsail
@@ -246,3 +247,13 @@ If you want to use the venv virtual environment from the command line, you need 
 http://ec2-34-213-204-151.us-west-2.compute.amazonaws.com/
 OR
 http://34.213.204.151/
+
+# References
+1. https://classroom.udacity.com/nanodegrees/nd004/parts/ab002e9a-b26c-43a4-8460-dc4c4b11c379
+2. https://discussions.udacity.com/t/lightsail-project-internal-server-error/502337/12
+3. https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps#step-four-%E2%80%93-configure-and-enable-a-new-virtual-host
+4. https://discussions.udacity.com/t/problems-with-the-digital-ocean-tutorial/336376 
+5. http://flask.pocoo.org/docs/0.10/deploying/mod_wsgi/#working-with-virtual-environments
+6. https://manpages.debian.org/jessie/apache2/a2ensite.8.en.html
+7. Google Searches
+8. I would like to thank Udacity Mentors @trish, @greg and @swooding
