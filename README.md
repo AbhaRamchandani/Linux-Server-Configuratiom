@@ -4,7 +4,9 @@ Host Item Catalog Web App on Lightsail Ubuntu instance
 Project Info
 
 IP address: 34.213.204.151
+
 Accessible SSH port: 2200.
+
 Application URL: http://ec2-34-213-204-151.us-west-2.compute.amazonaws.com/
 
 # 1 - Create a new user named grader and grant this user sudo permissions.
@@ -182,6 +184,65 @@ Note: You can choose to skip this step
 # 18 - Add the following links to ‘Authorized JavaScript origins’ in Google Developer’s Console -
   http://ec2-34-213-204-151.us-west-2.compute.amazonaws.com
   http://34.213.204.151
+  
+# 19 - I specifically had to perform the following steps to make this project work
+ 1. Updated catalog.conf to remove ServerName - 	
+ 	<VirtualHost *:80>
+                ServerAdmin admin@34.213.204.151
+                WSGIScriptAlias / /var/www/catalog/catalog.wsgi
+                <Directory /var/www/catalog/catalog/>
+                        Order allow,deny
+                        Allow from all
+                </Directory>
+                Alias /static /var/www/catalog/catalog/static
+                <Directory /var/www/catalog/catalog/static/>
+                        Order allow,deny
+                        Allow from all
+                </Directory>
+                ErrorLog ${APACHE_LOG_DIR}/error.log
+                LogLevel warn
+                CustomLog ${APACHE_LOG_DIR}/access.log combined
+	</VirtualHost>
+ 
+ Note: In the Virtual Host file, the ServerName directive is not needed in for this project and if included here should not be set to the IP address as is currently used, e.g. ServerName 34.213.204.151
+ 
+ 2. Updated catalog.wsgi as follows - 
+ #!/usr/bin/python
+import sys
+import logging
+logging.basicConfig(stream=sys.stderr)
+sys.path.insert(0,"/var/www/catalog/")
 
-# 19 - Restart Apache to launch the app
+activate_this = '/var/www/catalog/catalog/venv/bin/activate_this.py’
+execfile(activate_this, dict(file=activate_this))
+
+from catalog import app as application
+application.secret_key = ‘super_secret_key’
+
+Note: Running "sudo python project.py is OK to test your app temporarily on a port like 5000, but it will not involve the Apache web server running on port 80. To run the app on port 5000, you will need to make sure that traffic on that port is allowed through the external Lightsail firewall and the internal UFW firewall.
+What happens is Apache calls the WSGI file which then imports the Flask app object as the variable application. Requests are passed to your Flask app, processed, and the responses are served to the user by Apache.
+If you want to use the venv virtual environment from the command line, you need to enter it by running “source venv/bin/activate”. To get Apache to use the virtual environment, you need to add a couple of lines to the WSGI file. Details here:
+ 
+ 3. To stop the default Apache page from being displayed when loading the domain name of the server, disable the default Apache configuration - sudo a2dissite 000-default.conf
+ 
+ 4. Your app will be run by Apache and your app should be structured as a Python Package, which requires that there is a file named __init__.py in the directory structure. So, re-named project.py file to __init__.py
+ 
+ 5. Updated __init__.py file to include full path of the client_secrets.json file
+ 
+ Note: Think about how files are referenced in the Virtual Host file, is it only a file name or the full path to the file?
+ 
+ 6. Donloaded fresh client_secrets.json file from Google Developers Console and moved it to catalog project folder on the instance
+ 
+ 7. At regular intervals, to resolve errors, checked error.log file - sudo tail /var/log/apache2/error.log
+ 
+# 20 - Restart Apache to launch the app
+  Restarted the instance from lightsail
+  $ ssh -i ~/.ssh/udacity_key.rsa -p 2200 grader@34.213.204.151
+  $ cd /var/www/catalog/catalog
+  $ source venv/bin/activate
   $ sudo service apache2 restart
+  
+# You can now access the app @ - 
+http://ec2-34-213-204-151.us-west-2.compute.amazonaws.com/
+OR
+http://34.213.204.151/
