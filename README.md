@@ -1,3 +1,5 @@
+Completed: 2-Jan-2018
+
 # Linux-Server-Configuratiom
 Host Item Catalog Web App on Lightsail Ubuntu instance
 
@@ -12,12 +14,12 @@ Application URL: http://ec2-34-213-204-151.us-west-2.compute.amazonaws.com/
 # 1 - Create a new user named grader and grant this user sudo permissions.
   1. Log into the remote VM as root user through ssh: $ ssh root@34.213.204.151
   2. Add a new user called grader: $ sudo adduser grader
-     with password: grader and Full name: Udacity Grader
+      - with password: grader and Full name: Udacity Grader
   3. Create a new file under the suoders directory: $ sudo nano /etc/sudoers.d/grader
   4. Fill that newly created file with the following line of text: “grader ALL=(ALL:ALL) ALL”, without quotes
      then save it.
   5. In order to prevent the “sudo: unable to resolve host” error, edit the hosts: $ sudo nano /etc/hosts
-     Add the host: 127.0.1.1 ip-10-20-37-65
+      - Add the host: 127.0.1.1 ip-10-20-37-65
 
 # 2 - Update all currently installed packages
   1. $ sudo apt-get update
@@ -32,9 +34,9 @@ Application URL: http://ec2-34-213-204-151.us-west-2.compute.amazonaws.com/
   1. Generate an encryption key on your local machine with: $ ssh-keygen -f ~/.ssh/udacity_key.rsa
   2. Log into the remote VM as root user through ssh and perform the following instructions: $ su grader -> $ cd /home/grader      -> mkdir .ssh -> cd .ssh -> sudo nano authorized_keys
   3. Copy the content of the udacity_key.pub file from your local machine to the /home/grader/.ssh/authorized_keys file you        just created on the remote VM. Then change some permissions:
-     $ sudo chmod 700 /home/grader/.ssh.
-     $ sudo chmod 644 /home/grader/.ssh/authorized_keys
-     Finally change the owner from root to grader: $ sudo chown -R grader:grader /home/grader/.ssh
+      - $ sudo chmod 700 /home/grader/.ssh.
+      - $ sudo chmod 644 /home/grader/.ssh/authorized_keys
+      - Finally change the owner from root to grader: $ sudo chown -R grader:grader /home/grader/.ssh
   4. Now you are able to log into the remote VM through ssh with the following command: $ ssh -i ~/.ssh/udacity_key.rsa            grader@34.213.204.151
 
 Note: To access public file on your machine cd .ssh -> provide your machine password
@@ -71,8 +73,8 @@ Note: To access public file on your machine cd .ssh -> provide your machine pass
 Note: You can choose to skip this step
 
 # 10 - Configure cron scripts to automatically manage package updates
-1. Install unattended-upgrades if not already installed: $ sudo apt-get install unattended-upgrades
-2. To enable it, do: $ sudo dpkg-reconfigure --priority=low unattended-upgrades
+  1. Install unattended-upgrades if not already installed: $ sudo apt-get install unattended-upgrades
+  2. To enable it, do: $ sudo dpkg-reconfigure --priority=low unattended-upgrades
 
 # 11 - Install Apache, mod_wsgi
   1. $ sudo apt-get install apache2
@@ -91,10 +93,10 @@ Note: You can choose to skip this step
   3. Move inside this directory using the following command: cd FlaskApp
   4. Clone the catalog repository from Github: $ git clone https://github.com/AbhaRamchandani/Item-Catalog.git catalog
   5. Install tree and run it. Your folder structure looks like this -
-      |Catalog
-         -|Catalog
-              -|static
-              -|templates
+      - catalog
+         - catalog
+            - static
+            - templates
 ￼
   6. To test everything is set up correctly, do the following. We will do the actual test in the next steps.
       - create the init.py file that will contain the flask application logic: sudo nano init.py
@@ -103,9 +105,9 @@ Note: You can choose to skip this step
   	      app = Flask(__name__)
   	      @app.route("/")
   	      def hello():
-				      return "Hello, I love Digital Ocean!"
+			return "Hello, I love Digital Ocean!"
   	      if __name__ == "__main__":
-				      app.run()
+			app.run()
 
 # 14 - Install virtual environment, Flask and the project’s dependencies
   1. We will use pip to install virtualenv and Flask. If pip is not installed, install it on Ubuntu through apt-get: sudo apt-      get install python-pip
@@ -125,23 +127,22 @@ Note: You can choose to skip this step
 # 15 - Configure and enable a new virtual host
   1. Create a virtual host conifg file: $ sudo nano /etc/apache2/sites-available/catalog.conf
   2. Paste in the following lines of code:
-      <VirtualHost *:80>
-          ServerName 34.213.204.151
-          ServerAdmin admin@34.213.204.151
-          WSGIScriptAlias / /var/www/catalog/catalog.wsgi
-          <Directory /var/www/catalog/catalog/>
-              Order allow,deny
-              Allow from all
-          </Directory>
-          Alias /static /var/www/catalog/catalog/static
-          <Directory /var/www/catalog/catalog/static/>
-              Order allow,deny
-              Allow from all
-          </Directory>
-          ErrorLog ${APACHE_LOG_DIR}/error.log
-          LogLevel warn
-          CustomLog ${APACHE_LOG_DIR}/access.log combined
-       </VirtualHost>
+	<VirtualHost *:80>
+                ServerAdmin admin@34.213.204.151
+                WSGIScriptAlias / /var/www/catalog/catalog.wsgi
+                <Directory /var/www/catalog/catalog/>
+                        Order allow,deny
+                        Allow from all
+                </Directory>
+                Alias /static /var/www/catalog/catalog/static
+                <Directory /var/www/catalog/catalog/static/>
+                        Order allow,deny
+                        Allow from all
+                </Directory>
+                ErrorLog ${APACHE_LOG_DIR}/error.log
+                LogLevel warn
+                CustomLog ${APACHE_LOG_DIR}/access.log combined
+	</VirtualHost>
   3. Enable the new virtual host: $ sudo a2ensite catalog
 
 # 16 - Create the .wsgi File
@@ -149,14 +150,30 @@ Note: You can choose to skip this step
      cd /var/www/catalog
      sudo nano catalog.wsgi
   2. Add the following lines of code to the catalog.wsgi file:
-      #!/usr/bin/python
-      import sys
-      import logging
-      logging.basicConfig(stream=sys.stderr)
-      sys.path.insert(0,"/var/www/catalog/")
+	#!/usr/bin/python
+	import sys
+	import logging
+	logging.basicConfig(stream=sys.stderr)
+	sys.path.insert(0,"/var/www/catalog/")
 
-      from catalog import app as application
+	activate_this = '/var/www/catalog/catalog/venv/bin/activate_this.py'
+	execfile(activate_this, dict(__file__=activate_this))
 
+	from catalog import app as application
+	application.secret_key = 'super_secret_key'
+  3. Now your directory structure should look like this:
+      - catalog
+         - catalog
+            - static
+            - templates
+	    .
+  	    .
+	    .
+	    
+            - local
+	  - catalog.wsgi
+	- html
+	
 # 17 - Install and configure PostgreSQL
 
   1. Install some necessary Python packages for working with PostgreSQL: $ sudo apt-get install libpq-dev python-dev
@@ -234,6 +251,8 @@ If you want to use the venv virtual environment from the command line, you need 
  
  6. Downloaded fresh client_secrets.json file from Google Developers Console and moved it to catalog project folder on the instance
  
+ Note: For the "client_secrets.json" file, it works best to make the changes in the Google console and then re-download the file since oftentimes editing the file by hand introduces some kind of minor error that is hard to detect by that causes errors in the app. It is a few more clicks to generate the file from the download, but well worth it.
+ 
  7. At regular intervals, to resolve errors, checked error.log file - sudo tail /var/log/apache2/error.log
 Also, checked what sites are now enabled using: ls -alh /etc/apache2/sites-enabled/
  
@@ -256,5 +275,7 @@ http://34.213.204.151/
 4. https://discussions.udacity.com/t/problems-with-the-digital-ocean-tutorial/336376 
 5. http://flask.pocoo.org/docs/0.10/deploying/mod_wsgi/#working-with-virtual-environments
 6. https://manpages.debian.org/jessie/apache2/a2ensite.8.en.html
-7. Google Searches
-8. I would like to thank Udacity Mentors @trish, @greg and @swooding
+7. http://docs.python-guide.org/en/latest/dev/virtualenvs/
+8. Google Searches
+9. I would like to thank Udacity Mentors @trish, @greg and @swooding
+10.I referred many other projects on github. This one had the most clear instructions, although not everything worked for me and I did lot of Google Searches and asked questions on forums: https://github.com/iliketomatoes/linux_server_configuration
