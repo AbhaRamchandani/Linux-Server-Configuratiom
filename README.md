@@ -171,8 +171,8 @@ Note: You can choose to skip this step
 	    .
 	    
             - local
-	  - catalog.wsgi
-	- html
+	     - catalog.wsgi
+	   - html
 	
 # 17 - Install and configure PostgreSQL
 
