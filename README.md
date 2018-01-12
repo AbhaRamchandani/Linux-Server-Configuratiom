@@ -278,4 +278,4 @@ http://34.213.204.151/
 7. http://docs.python-guide.org/en/latest/dev/virtualenvs/
 8. Google Searches
 9. I would like to thank Udacity Mentors @trish, @greg and @swooding
-10.I referred many other projects on github. This one had the most clear instructions, although not everything worked for me and I did lot of Google Searches and asked questions on forums: https://github.com/iliketomatoes/linux_server_configuration
+10. I referred many other projects on github. This one had the most clear instructions, although not everything worked for me and I did lot of Google Searches and asked questions on forums: https://github.com/iliketomatoes/linux_server_configuration
